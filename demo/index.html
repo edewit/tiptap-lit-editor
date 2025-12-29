@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipTap Lit Editor Demo</title>
+    <style>
+        :root {
+            /* Lumo-like CSS variables for the demo */
+            --lumo-space-xs: 0.25rem;
+            --lumo-space-s: 0.5rem;
+            --lumo-space-m: 1rem;
+            --lumo-space-l: 1.5rem;
+            --lumo-space-xl: 2rem;
+            --lumo-font-size-xs: 0.75rem;
+            --lumo-font-size-s: 0.875rem;
+            --lumo-font-size-m: 1rem;
+            --lumo-font-size-l: 1.125rem;
+            --lumo-font-size-xl: 1.5rem;
+            --lumo-border-radius-s: 0.25rem;
+            --lumo-border-radius-m: 0.5rem;
+            --lumo-base-color: #ffffff;
+            --lumo-body-text-color: #1a1a1a;
+            --lumo-contrast-5pct: rgba(0, 0, 0, 0.05);
+            --lumo-contrast-10pct: rgba(0, 0, 0, 0.1);
+            --lumo-contrast-20pct: rgba(0, 0, 0, 0.2);
+            --lumo-contrast-60pct: rgba(0, 0, 0, 0.6);
+            --lumo-primary-color: #1976d2;
+            --lumo-primary-color-10pct: rgba(25, 118, 210, 0.1);
+            --lumo-primary-color-50pct: rgba(25, 118, 210, 0.5);
+            --lumo-primary-contrast-color: #ffffff;
+            --lumo-shade-30pct: rgba(0, 0, 0, 0.3);
+            --lumo-font-family-monospace: 'Fira Code', 'Consolas', 'Monaco', monospace;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --lumo-base-color: #1e1e1e;
+                --lumo-body-text-color: #e0e0e0;
+                --lumo-contrast-5pct: rgba(255, 255, 255, 0.05);
+                --lumo-contrast-10pct: rgba(255, 255, 255, 0.1);
+                --lumo-contrast-20pct: rgba(255, 255, 255, 0.2);
+                --lumo-contrast-60pct: rgba(255, 255, 255, 0.6);
+                --lumo-shade-30pct: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--lumo-contrast-5pct);
+            color: var(--lumo-body-text-color);
+            min-height: 100vh;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--lumo-space-xl);
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: var(--lumo-space-xl);
+        }
+
+        .demo-header h1 {
+            margin: 0 0 var(--lumo-space-s) 0;
+            font-size: 2rem;
+            color: var(--lumo-primary-color);
+        }
+
+        .demo-header p {
+            margin: 0;
+            color: var(--lumo-contrast-60pct);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: var(--lumo-space-m);
+            margin-bottom: var(--lumo-space-m);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .demo-controls label {
+            display: flex;
+            align-items: center;
+            gap: var(--lumo-space-xs);
+            cursor: pointer;
+        }
+
+        .demo-controls button {
+            padding: var(--lumo-space-xs) var(--lumo-space-m);
+            border: 1px solid var(--lumo-contrast-20pct);
+            border-radius: var(--lumo-border-radius-s);
+            background: var(--lumo-base-color);
+            color: var(--lumo-body-text-color);
+            cursor: pointer;
+            font-size: var(--lumo-font-size-s);
+        }
+
+        .demo-controls button:hover {
+            background: var(--lumo-contrast-10pct);
+        }
+
+        .demo-controls button.primary {
+            background: var(--lumo-primary-color);
+            color: var(--lumo-primary-contrast-color);
+            border-color: var(--lumo-primary-color);
+        }
+
+        .demo-controls button.primary:hover {
+            opacity: 0.9;
+        }
+
+        .editor-wrapper {
+            background: var(--lumo-base-color);
+            border-radius: var(--lumo-border-radius-m);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        base-editor {
+            height: 400px;
+        }
+
+        .output-section {
+            margin-top: var(--lumo-space-xl);
+        }
+
+        .output-section h3 {
+            margin: 0 0 var(--lumo-space-s) 0;
+            font-size: var(--lumo-font-size-l);
+        }
+
+        .output-content {
+            background: var(--lumo-base-color);
+            border: 1px solid var(--lumo-contrast-20pct);
+            border-radius: var(--lumo-border-radius-m);
+            padding: var(--lumo-space-m);
+            font-family: var(--lumo-font-family-monospace);
+            font-size: var(--lumo-font-size-s);
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: var(--lumo-space-xs);
+            margin-bottom: var(--lumo-space-s);
+        }
+
+        .tabs button {
+            padding: var(--lumo-space-xs) var(--lumo-space-m);
+            border: 1px solid var(--lumo-contrast-20pct);
+            border-radius: var(--lumo-border-radius-s) var(--lumo-border-radius-s) 0 0;
+            background: var(--lumo-contrast-5pct);
+            color: var(--lumo-body-text-color);
+            cursor: pointer;
+            font-size: var(--lumo-font-size-s);
+            border-bottom: none;
+        }
+
+        .tabs button.active {
+            background: var(--lumo-base-color);
+            border-bottom: 1px solid var(--lumo-base-color);
+            margin-bottom: -1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>TipTap Lit Editor</h1>
+            <p>A rich text editor built with TipTap and Lit components</p>
+        </div>
+
+        <div class="demo-controls">
+            <label>
+                <input type="checkbox" id="markdown-toggle" checked>
+                Markdown Mode
+            </label>
+            <button id="get-content">Get Content</button>
+            <button id="clear-content">Clear</button>
+            <button id="set-sample" class="primary">Load Sample</button>
+        </div>
+
+        <div class="editor-wrapper">
+            <base-editor id="editor" markdown></base-editor>
+        </div>
+
+        <div class="output-section">
+            <div class="tabs">
+                <button class="active" data-tab="output">Output</button>
+                <button data-tab="html">HTML</button>
+            </div>
+            <div class="output-content" id="output">
+                <em>Click "Get Content" to see the editor output</em>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { BaseEditor } from '../src/index.js';
+
+        const editor = document.getElementById('editor');
+        const output = document.getElementById('output');
+        const markdownToggle = document.getElementById('markdown-toggle');
+
+        // Sample content
+        const sampleMarkdown = `# Welcome to TipTap Lit Editor
+
+This is a **rich text editor** built with [TipTap](https://tiptap.dev/) and [Lit](https://lit.dev/).
+
+## Features
+
+- **Bold** and *italic* text formatting
+- [Links](https://example.com) and images
+- Headings (H1-H6)
+- Bullet and numbered lists
+- Code blocks with syntax highlighting
+- Tables
+- Drag and drop reordering
+
+## Try It Out
+
+1. Select some text to see the bubble menu
+2. Hover on the left edge to see the gutter menu
+3. Click the "+" button to add new blocks
+
+### Code Example
+
+\`\`\`javascript
+function hello() {
+    console.log('Hello, World!');
+}
+\`\`\`
+
+| Feature | Status |
+|---------|--------|
+| Bold | ✅ |
+| Italic | ✅ |
+| Links | ✅ |
+| Images | ✅ |
+| Tables | ✅ |
+
+---
+
+Start editing to see the magic! ✨
+`;
+
+        const sampleHtml = `<h1>Welcome to TipTap Lit Editor</h1>
+<p>This is a <strong>rich text editor</strong> built with <a href="https://tiptap.dev/">TipTap</a> and <a href="https://lit.dev/">Lit</a>.</p>
+<h2>Features</h2>
+<ul>
+<li><strong>Bold</strong> and <em>italic</em> text formatting</li>
+<li>Links and images</li>
+<li>Headings (H1-H6)</li>
+<li>Bullet and numbered lists</li>
+</ul>
+<p>Start editing to see the magic! ✨</p>`;
+
+        // Toggle markdown mode
+        markdownToggle.addEventListener('change', (e) => {
+            const isMarkdown = e.target.checked;
+            if (isMarkdown) {
+                editor.setAttribute('markdown', '');
+            } else {
+                editor.removeAttribute('markdown');
+            }
+            // Reload with appropriate sample
+            editor.setContent(isMarkdown ? sampleMarkdown : sampleHtml);
+        });
+
+        // Get content button
+        document.getElementById('get-content').addEventListener('click', () => {
+            const content = editor.getContent();
+            output.textContent = content;
+        });
+
+        // Clear button
+        document.getElementById('clear-content').addEventListener('click', () => {
+            editor.setContent('');
+            output.innerHTML = '<em>Editor cleared</em>';
+        });
+
+        // Load sample button
+        document.getElementById('set-sample').addEventListener('click', () => {
+            const isMarkdown = markdownToggle.checked;
+            editor.setContent(isMarkdown ? sampleMarkdown : sampleHtml);
+            output.innerHTML = '<em>Sample content loaded</em>';
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tabs button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const tab = e.target.dataset.tab;
+                if (tab === 'html') {
+                    const tiptapEditor = editor.getEditor();
+                    if (tiptapEditor) {
+                        output.textContent = tiptapEditor.getHTML();
+                    }
+                } else {
+                    output.innerHTML = '<em>Click "Get Content" to see the editor output</em>';
+                }
+            });
+        });
+
+        // Listen for content changes
+        editor.addEventListener('content-changed', (e) => {
+            console.log('Content changed:', e.detail.content.substring(0, 100) + '...');
+        });
+
+        // Load sample content initially
+        setTimeout(() => {
+            editor.setContent(sampleMarkdown);
+        }, 100);
+    </script>
+</body>
+</html>
+
