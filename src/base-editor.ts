@@ -3,9 +3,10 @@
  * Provides a complete editing experience with gutter menu, floating menu, and bubble menu
  */
 
-import { LitElement, css, html } from 'lit';
-import { ContextProvider } from '@lit/context';
-import { Editor } from '@tiptap/core';
+import { LitElement, css, html, type PropertyValues } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { provide } from '@lit/context';
+import { Editor, type AnyExtension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import { Image } from '@tiptap/extension-image';
@@ -19,24 +20,36 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 
-import { editorContext } from './editor-context.js';
+import { editorContext, type EditorContextValue } from './editor-context.js';
 import { hljsTheme } from './hljs-theme.js';
 import './components/bubble-menu.js';
 import './components/floating-menu.js';
 import './components/gutter-menu.js';
 
+// Type for editor with markdown extension
+interface MarkdownEditor extends Editor {
+    getMarkdown(): string;
+}
+
+@customElement('base-editor')
 export class BaseEditor extends LitElement {
+    @provide({ context: editorContext })
+    @state()
+    private _editorContext: EditorContextValue = { editor: null, editorElement: null };
 
-    static properties = {
-        content: { type: String },
-        markdown: { type: Boolean },
-        editable: { type: Boolean },
-        extensions: { type: Array },
-        placeholder: { type: String },
-        _editedContent: { state: true },
-    };
+    @property({ type: String }) content = '';
+    @property({ type: Boolean }) markdown = false;
+    @property({ type: Boolean }) editable = true;
+    @property({ type: Array }) extensions: AnyExtension[] = [];
+    @property({ type: String }) placeholder = 'Start writing...';
+    
+    @state() private _editedContent = '';
 
-    static styles = [
+    private _editor: Editor | null = null;
+    private _editorElement: HTMLElement | null = null;
+    private _isInitializing = false;
+
+    static override styles = [
         hljsTheme,
         css`
         :host {
@@ -135,42 +148,24 @@ export class BaseEditor extends LitElement {
         }
     `];
 
-    constructor() {
-        super();
-        this.content = '';
-        this.markdown = false;
-        this.editable = true;
-        this.extensions = [];
-        this.placeholder = 'Start writing...';
-        this._editedContent = '';
-        this._editor = null;
-        this._editorElement = null;
-        this._isInitializing = false;
-
-        this._provider = new ContextProvider(this, {
-            context: editorContext,
-            initialValue: { editor: null, editorElement: null }
-        });
-    }
-
-    firstUpdated() {
+    override firstUpdated(): void {
         this._tryInitializeEditor();
     }
 
-    updated(changedProperties) {
+    override updated(changedProperties: PropertyValues): void {
         if (!this._editor) {
             this._tryInitializeEditor();
         }
 
         if (changedProperties.has('content') && this._editor && !this._editor.isDestroyed) {
             const currentContent = this.markdown
-                ? this._editor.getMarkdown()
+                ? (this._editor as MarkdownEditor).getMarkdown()
                 : this._editor.getHTML();
 
             if (currentContent !== this.content) {
                 this._isInitializing = true;
                 this._editor.commands.setContent(this.content, { 
-                    contentType: this.markdown ? 'markdown' : 'html' 
+                    emitUpdate: false
                 });
                 this._editedContent = this.content;
                 requestAnimationFrame(() => {
@@ -184,7 +179,7 @@ export class BaseEditor extends LitElement {
         }
     }
 
-    disconnectedCallback() {
+    override disconnectedCallback(): void {
         super.disconnectedCallback();
         if (this._editor && !this._editor.isDestroyed) {
             this._editor.destroy();
@@ -192,13 +187,13 @@ export class BaseEditor extends LitElement {
         }
     }
 
-    _tryInitializeEditor() {
-        const editorElement = this.shadowRoot.querySelector('.tiptap-editor');
+    private _tryInitializeEditor(): void {
+        const editorElement = this.shadowRoot?.querySelector('.tiptap-editor') as HTMLElement | null;
         if (!editorElement || this._editor) {
             return;
         }
 
-        const bubbleMenuContainer = this.shadowRoot.querySelector('tiptap-bubble-menu');
+        const bubbleMenuContainer = this.shadowRoot?.querySelector('tiptap-bubble-menu') as HTMLElement | null;
         if (!bubbleMenuContainer) {
             requestAnimationFrame(() => {
                 this._tryInitializeEditor();
@@ -215,22 +210,18 @@ export class BaseEditor extends LitElement {
         });
 
         // Build base extensions based on markdown mode
-        const baseExtensions = this.markdown
+        const baseExtensions: AnyExtension[] = this.markdown
             ? [
-                StarterKit.configure({ link: false, codeBlock: false }),
-                Markdown.configure({
-                    html: true,
-                    transformPastedText: true,
-                    transformCopiedText: true,
-                    markedOptions: {
-                        gfm: true
-                    }
-                })
+                StarterKit.configure({ 
+                    link: false, 
+                    codeBlock: false 
+                }),
+                Markdown
             ]
             : [StarterKit.configure({ link: false })];
 
         // Build full extensions array
-        const extensions = [
+        const extensions: AnyExtension[] = [
             ...baseExtensions,
             ...(this.markdown ? [Table, TableRow, TableHeader, TableCell, ConfCodeBlockLowlight] : []),
             Image,
@@ -238,8 +229,7 @@ export class BaseEditor extends LitElement {
                 openOnClick: false,
             }),
             DragHandle.configure({
-                render: () => this.shadowRoot.getElementById('gutter-menu'),
-                dragHandleWidth: 24,
+                render: () => this.shadowRoot?.getElementById('gutter-menu') as HTMLElement,
             }),
             ...this.extensions,
         ];
@@ -258,10 +248,6 @@ export class BaseEditor extends LitElement {
                     }
                     return true;
                 },
-                tippyOptions: {
-                    placement: 'top',
-                    offset: [0, 8],
-                },
             }));
         }
 
@@ -269,11 +255,10 @@ export class BaseEditor extends LitElement {
             element: editorElement,
             extensions: extensions,
             content: this.content || '',
-            contentType: this.markdown ? 'markdown' : 'html',
             editable: this.editable,
             onUpdate: ({ editor }) => {
                 if (this.markdown) {
-                    this._editedContent = editor.getMarkdown();
+                    this._editedContent = (editor as MarkdownEditor).getMarkdown();
                 } else {
                     this._editedContent = editor.getHTML();
                 }
@@ -307,7 +292,8 @@ export class BaseEditor extends LitElement {
             },
         });
 
-        this._provider.setValue({ editor: this._editor, editorElement: this._editorElement });
+        // Update the context with the editor instance
+        this._editorContext = { editor: this._editor, editorElement: this._editorElement };
 
         requestAnimationFrame(() => {
             setTimeout(() => {
@@ -316,7 +302,7 @@ export class BaseEditor extends LitElement {
         });
     }
 
-    render() {
+    override render() {
         return html`
             <div class="editor-wrapper">
                 <tiptap-gutter-menu id="gutter-menu">
@@ -330,23 +316,23 @@ export class BaseEditor extends LitElement {
 
     /**
      * Get the current content
-     * @returns {string} The current content (HTML or Markdown based on mode)
+     * @returns The current content (HTML or Markdown based on mode)
      */
-    getContent() {
+    getContent(): string {
         if (this._editor && !this._editor.isDestroyed) {
-            return this.markdown ? this._editor.getMarkdown() : this._editor.getHTML();
+            return this.markdown ? (this._editor as MarkdownEditor).getMarkdown() : this._editor.getHTML();
         }
         return this._editedContent;
     }
 
     /**
      * Set the content
-     * @param {string} content - The content to set
+     * @param content - The content to set
      */
-    setContent(content) {
+    setContent(content: string): void {
         if (this._editor && !this._editor.isDestroyed) {
             this._editor.commands.setContent(content, {
-                contentType: this.markdown ? 'markdown' : 'html'
+                emitUpdate: false
             });
         }
         this._editedContent = content;
@@ -354,21 +340,24 @@ export class BaseEditor extends LitElement {
 
     /**
      * Get the TipTap editor instance
-     * @returns {Editor|null} The TipTap editor instance
+     * @returns The TipTap editor instance
      */
-    getEditor() {
+    getEditor(): Editor | null {
         return this._editor;
     }
 
     /**
      * Focus the editor
      */
-    focus() {
+    focus(): void {
         if (this._editor && !this._editor.isDestroyed) {
             this._editor.commands.focus();
         }
     }
 }
 
-customElements.define('base-editor', BaseEditor);
-
+declare global {
+    interface HTMLElementTagNameMap {
+        'base-editor': BaseEditor;
+    }
+}

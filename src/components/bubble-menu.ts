@@ -4,34 +4,25 @@
  */
 
 import { LitElement, css, html } from 'lit';
-import { ContextConsumer } from '@lit/context';
-import { editorContext } from '../editor-context.js';
+import { customElement, state } from 'lit/decorators.js';
+import { consume } from '@lit/context';
+import type { Editor } from '@tiptap/core';
+import { editorContext, type EditorContextValue } from '../editor-context.js';
 import { showPrompt } from './prompt-dialog.js';
 
+@customElement('tiptap-bubble-menu')
 export class BubbleMenu extends LitElement {
-    static properties = {
-        _isInList: { state: true },
-    };
+    @consume({ context: editorContext, subscribe: true })
+    @state()
+    private _editorContext?: EditorContextValue;
 
-    constructor() {
-        super();
-        this._isInList = false;
-        this._editorContext = null;
-        this._updateFrame = null;
-        this._lastUpdateTime = 0;
-        this._updateThrottle = 50; // Update at most every 50ms
-        
-        this._editorConsumer = new ContextConsumer(this, {
-            context: editorContext,
-            subscribe: true,
-            callback: () => {
-                // When editor context changes, set up update mechanism
-                this._setupEditorUpdates();
-            }
-        });
-    }
+    @state() private _isInList = false;
 
-    static styles = css`
+    private _updateFrame: number | null = null;
+    private _lastUpdateTime = 0;
+    private _updateThrottle = 50; // Update at most every 50ms
+
+    static override styles = css`
         :host {
             display: block;
         }
@@ -89,47 +80,44 @@ export class BubbleMenu extends LitElement {
         }
     `;
 
-    get editor() {
-        return this._editorConsumer.value?.editor || null;
+    get editor(): Editor | null {
+        return this._editorContext?.editor ?? null;
     }
 
-    get editorElement() {
-        return this._editorConsumer.value?.editorElement || null;
+    get editorElement(): HTMLElement | null {
+        return this._editorContext?.editorElement ?? null;
     }
 
-    connectedCallback() {
+    override connectedCallback(): void {
         super.connectedCallback();
         this._setupEditorUpdates();
     }
 
-    disconnectedCallback() {
+    override disconnectedCallback(): void {
         super.disconnectedCallback();
         this._cleanupEditorUpdates();
     }
 
-    firstUpdated() {
-        // Attach click listener
+    override firstUpdated(): void {
         this.addEventListener('click', this._handleClick.bind(this));
         this._setupEditorUpdates();
     }
 
-    updated(changedProperties) {
-        super.updated(changedProperties);
-        // Note: Button states are updated via the animation frame loop in _setupEditorUpdates()
-        // to avoid infinite update loops
+    override updated(): void {
+        // Re-setup updates when context changes
+        if (this.editor) {
+            this._setupEditorUpdates();
+        }
     }
 
-    _setupEditorUpdates() {
+    private _setupEditorUpdates(): void {
         this._cleanupEditorUpdates();
         
         if (!this.editor) return;
         
-        // Set up throttled updates to check editor state when component is visible
-        // This ensures the menu stays in sync with editor state
-        const updateLoop = () => {
+        const updateLoop = (): void => {
             if (this.editor && this.isConnected) {
                 const now = Date.now();
-                // Only update if component is visible and throttle time has passed
                 const isVisible = this.offsetParent !== null && 
                                  this.style.display !== 'none' &&
                                  window.getComputedStyle(this).display !== 'none';
@@ -147,14 +135,14 @@ export class BubbleMenu extends LitElement {
         this._updateFrame = requestAnimationFrame(updateLoop);
     }
 
-    _cleanupEditorUpdates() {
+    private _cleanupEditorUpdates(): void {
         if (this._updateFrame) {
             cancelAnimationFrame(this._updateFrame);
             this._updateFrame = null;
         }
     }
 
-    render() {
+    override render() {
         return html`
             <div class="tiptap-menu">
                 <button 
@@ -183,7 +171,7 @@ export class BubbleMenu extends LitElement {
         `;
     }
 
-    _isCommandActive(command) {
+    private _isCommandActive(command: string): boolean {
         if (!this.editor) return false;
         
         switch (command) {
@@ -200,18 +188,17 @@ export class BubbleMenu extends LitElement {
         }
     }
 
-    _updateButtonStates() {
+    private _updateButtonStates(): void {
         if (!this.editor) return;
-        
-        // Update list visibility state
-        // Changing _isInList (a reactive state property) will automatically trigger a re-render
         this._isInList = this.editor.isActive('bulletList') || this.editor.isActive('orderedList');
     }
 
-    _handleClick(e) {
-        // Use composedPath to find the button in Shadow DOM
+    private _handleClick(e: Event): void {
         const path = e.composedPath();
-        const button = path.find(el => el.classList && el.classList.contains('tiptap-menu-button'));
+        const button = path.find(el => 
+            el instanceof HTMLElement && el.classList?.contains('tiptap-menu-button')
+        ) as HTMLElement | undefined;
+        
         if (!button || !this.editor) return;
         
         const command = button.dataset.command;
@@ -221,22 +208,20 @@ export class BubbleMenu extends LitElement {
         } else if (command === 'italic') {
             this.editor.chain().focus().toggleItalic().run();
         } else if (command === 'link') {
-            // Get current link URL if selection is inside a link
             const currentLinkAttrs = this.editor.getAttributes('link');
             const currentUrl = currentLinkAttrs.href || '';
             
             showPrompt('Enter URL:', currentUrl).then(url => {
                 if (url) {
-                    this.editor.chain().focus().setLink({ href: url }).run();
+                    this.editor?.chain().focus().setLink({ href: url }).run();
                 } else if (currentUrl) {
-                    // If user cleared the URL, remove the link
-                    this.editor.chain().focus().unsetLink().run();
+                    this.editor?.chain().focus().unsetLink().run();
                 }
             });
         } else if (command === 'image') {
             showPrompt('Enter image URL:', '').then(url => {
                 if (url) {
-                    this.editor.chain().focus().setImage({ src: url }).run();
+                    this.editor?.chain().focus().setImage({ src: url }).run();
                 }
             });
         } else if (command === 'bulletList') {
@@ -245,10 +230,12 @@ export class BubbleMenu extends LitElement {
             this.editor.chain().focus().toggleOrderedList().run();
         }
         
-        // Update button states after command
         this._updateButtonStates();
     }
 }
 
-customElements.define('tiptap-bubble-menu', BubbleMenu);
-
+declare global {
+    interface HTMLElementTagNameMap {
+        'tiptap-bubble-menu': BubbleMenu;
+    }
+}

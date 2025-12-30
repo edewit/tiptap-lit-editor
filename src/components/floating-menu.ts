@@ -4,26 +4,22 @@
  */
 
 import { LitElement, css, html } from 'lit';
-import { ContextConsumer } from '@lit/context';
-import { editorContext } from '../editor-context.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { consume } from '@lit/context';
+import type { Editor } from '@tiptap/core';
+import { editorContext, type EditorContextValue } from '../editor-context.js';
 
+@customElement('tiptap-floating-menu')
 export class FloatingMenu extends LitElement {
-    static properties = {
-        visible: { type: Boolean, reflect: true },
-    };
+    @consume({ context: editorContext, subscribe: true })
+    @state()
+    private _editorContext?: EditorContextValue;
 
-    constructor() {
-        super();
-        this.visible = false;
-        this.pos = null;
-        
-        this._editorConsumer = new ContextConsumer(this, {
-            context: editorContext,
-            subscribe: true
-          });
-    }
+    @property({ type: Boolean, reflect: true }) visible = false;
 
-    static styles = css`
+    private pos: number | null = null;
+
+    static override styles = css`
         :host {
             position: absolute;
             z-index: 20;
@@ -78,22 +74,21 @@ export class FloatingMenu extends LitElement {
         }
     `;
 
-    get editor() {
-        return this._editorConsumer.value?.editor || null;
+    get editor(): Editor | null {
+        return this._editorContext?.editor ?? null;
     }
 
-    get editorElement() {
-        return this._editorConsumer.value?.editorElement || null;
+    get editorElement(): HTMLElement | null {
+        return this._editorContext?.editorElement ?? null;
     }
 
-    firstUpdated() {
-        // Attach click listeners
+    override firstUpdated(): void {
         this.addEventListener('click', this._handleClick.bind(this));
         this.addEventListener('mouseenter', this._handleMouseEnter.bind(this));
         this.addEventListener('mouseleave', this._handleMouseLeave.bind(this));
     }
 
-    render() {
+    override render() {
         return html`
             <div class="tiptap-menu">
                 <button class="tiptap-menu-button" data-command="heading" data-level="1" title="Heading 1">H1</button>
@@ -115,14 +110,16 @@ export class FloatingMenu extends LitElement {
      * Position the floating menu relative to a block element
      * Now uses CSS positioning relative to parent gutter menu
      */
-    position(e) {
+    position(e: MouseEvent): void {
         if (!this.editor || !this.editorElement) return;
         
         const coords = this.editor.view.posAtCoords({
             left: e.clientX,
             top: e.clientY
         });
-        this.pos = coords.pos;
+        if (coords) {
+            this.pos = coords.pos;
+        }
 
         this.show();
     }
@@ -130,21 +127,21 @@ export class FloatingMenu extends LitElement {
     /**
      * Show the floating menu
      */
-    show() {
+    show(): void {
         this.visible = true;
     }
 
     /**
      * Hide the floating menu
      */
-    hide() {
+    hide(): void {
         this.visible = false;
     }
 
     /**
      * Toggle the floating menu visibility
      */
-    toggle(e) {
+    toggle(e: MouseEvent): void {
         if (this.visible) {
             this.hide();
         } else {
@@ -155,16 +152,17 @@ export class FloatingMenu extends LitElement {
     /**
      * Handle button clicks in the menu
      */
-    _handleClick(e) {
-        // Use composedPath to find the button in Shadow DOM
+    private _handleClick(e: Event): void {
         const path = e.composedPath();
-        const button = path.find(el => el.classList && el.classList.contains('tiptap-menu-button'));
+        const button = path.find(el => 
+            el instanceof HTMLElement && el.classList?.contains('tiptap-menu-button')
+        ) as HTMLElement | undefined;
+        
         if (!button || !this.editor) return;
 
         const command = button.dataset.command;
         const level = button.dataset.level;
 
-        // Get position after current block
         const pos = this.pos;
         if (pos === null) return;
 
@@ -207,7 +205,7 @@ export class FloatingMenu extends LitElement {
                 })
                 .setTextSelection(pos + 1)
                 .run();
-        } else {
+        } else if (command === 'heading' && level) {
             this.editor.chain()
                 .focus()
                 .insertContentAt(pos, { 
@@ -224,18 +222,20 @@ export class FloatingMenu extends LitElement {
     /**
      * Handle mouse enter - keep menu visible
      */
-    _handleMouseEnter() {
-        // Dispatch event to notify parent to keep menu visible
+    private _handleMouseEnter(): void {
         this.dispatchEvent(new CustomEvent('menu-enter', { bubbles: true, composed: true }));
     }
 
     /**
      * Handle mouse leave - hide menu
      */
-    _handleMouseLeave() {
+    private _handleMouseLeave(): void {
         this.hide();
     }
 }
 
-customElements.define('tiptap-floating-menu', FloatingMenu);
-
+declare global {
+    interface HTMLElementTagNameMap {
+        'tiptap-floating-menu': FloatingMenu;
+    }
+}

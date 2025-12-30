@@ -5,16 +5,13 @@
  */
 
 import { LitElement, css, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import './floating-menu.js';
+import type { FloatingMenu } from './floating-menu.js';
 
+@customElement('tiptap-gutter-menu')
 export class GutterMenu extends LitElement {
-    static properties = {};
-
-    constructor() {
-        super();
-    }
-
-    static styles = css`
+    static override styles = css`
         :host {
             display: flex;
             flex-direction: row;
@@ -65,22 +62,22 @@ export class GutterMenu extends LitElement {
         }
     `;
 
-    firstUpdated() {
-        const addButton = this.shadowRoot.querySelector('.gutter-add-button');
+    override firstUpdated(): void {
+        const addButton = this.shadowRoot?.querySelector('.gutter-add-button');
 
         if (addButton) {
-            addButton.addEventListener('click', this._handleAddClick.bind(this));
+            addButton.addEventListener('click', ((e: Event) => this._handleAddClick(e as MouseEvent)) as EventListener);
         }
     }
 
-    get floatingMenu() {
+    get floatingMenu(): FloatingMenu | null {
         return this.querySelector('tiptap-floating-menu');
     }
 
-    render() {
+    override render() {
         return html`
             <button class="gutter-menu-button gutter-add-button" title="Add block">+</button>
-            <button class="gutter-menu-button gutter-drag-button" dragable title="Drag to reorder">⋮⋮</button>
+            <button class="gutter-menu-button gutter-drag-button" title="Drag to reorder">⋮⋮</button>
             <slot></slot>
         `;
     }
@@ -88,7 +85,7 @@ export class GutterMenu extends LitElement {
     /**
      * Handle add button click
      */
-    _handleAddClick(e) {
+    private _handleAddClick(e: MouseEvent): void {
         e.stopPropagation();
         if (this.floatingMenu) {
             this.floatingMenu.toggle(e);
@@ -96,5 +93,9 @@ export class GutterMenu extends LitElement {
     }
 }
 
-customElements.define('tiptap-gutter-menu', GutterMenu);
+declare global {
+    interface HTMLElementTagNameMap {
+        'tiptap-gutter-menu': GutterMenu;
+    }
+}
 
