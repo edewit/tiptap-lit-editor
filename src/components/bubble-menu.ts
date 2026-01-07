@@ -9,6 +9,7 @@ import { consume } from '@lit/context';
 import type { Editor } from '@tiptap/core';
 import { editorContext, type EditorContextValue } from '../editor-context.js';
 import { showPrompt } from './prompt-dialog.js';
+import './heading-dropdown.js';
 
 @customElement('tiptap-bubble-menu')
 export class BubbleMenu extends LitElement {
@@ -17,6 +18,7 @@ export class BubbleMenu extends LitElement {
     private _editorContext?: EditorContextValue;
 
     @state() private _isInList = false;
+    @state() private _isInHeading = false;
 
     private _updateFrame: number | null = null;
     private _lastUpdateTime = 0;
@@ -77,6 +79,18 @@ export class BubbleMenu extends LitElement {
         }
         .tiptap-menu-button[data-show-on-list].show {
             display: flex;
+        }
+        tiptap-heading-dropdown {
+            display: none;
+        }
+        tiptap-heading-dropdown.show {
+            display: inline-block;
+        }
+        .tiptap-menu-separator[data-show-on-heading] {
+            display: none;
+        }
+        .tiptap-menu-separator[data-show-on-heading].show {
+            display: block;
         }
     `;
 
@@ -145,28 +159,73 @@ export class BubbleMenu extends LitElement {
     override render() {
         return html`
             <div class="tiptap-menu">
+                <tiptap-heading-dropdown 
+                    class="${this._isInHeading ? 'show' : ''}"
+                    mode="toggle"
+                ></tiptap-heading-dropdown>
+                <div class="tiptap-menu-separator ${this._isInHeading ? 'show' : ''}" data-show-on-heading></div>
                 <button 
                     class="tiptap-menu-button ${this._isCommandActive('bold') ? 'is-active' : ''}" 
                     data-command="bold" 
-                    title="Bold">B</button>
+                    title="Bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                        <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                    </svg>
+                </button>
                 <button 
                     class="tiptap-menu-button ${this._isCommandActive('italic') ? 'is-active' : ''}" 
                     data-command="italic" 
-                    title="Italic">I</button>
+                    title="Italic">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="4" x2="10" y2="4"></line>
+                        <line x1="14" y1="20" x2="5" y2="20"></line>
+                        <line x1="15" y1="4" x2="9" y2="20"></line>
+                    </svg>
+                </button>
                 <div class="tiptap-menu-separator ${this._isInList ? 'show' : ''}" data-show-on-list></div>
-                <button class="tiptap-menu-button" data-command="link" title="Link">Link</button>
-                <button class="tiptap-menu-button" data-command="image" title="Image">Image</button>
+                <button class="tiptap-menu-button" data-command="link" title="Link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                </button>
+                <button class="tiptap-menu-button" data-command="image" title="Image">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                </button>
                 <div class="tiptap-menu-separator ${this._isInList ? 'show' : ''}" data-show-on-list></div>
                 <button 
                     class="tiptap-menu-button ${this._isCommandActive('bulletList') ? 'is-active' : ''} ${this._isInList ? 'show' : ''}" 
                     data-command="bulletList" 
                     data-show-on-list 
-                    title="Bullet List">•</button>
+                    title="Bullet List">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <circle cx="4" cy="6" r="1" fill="currentColor"></circle>
+                        <circle cx="4" cy="12" r="1" fill="currentColor"></circle>
+                        <circle cx="4" cy="18" r="1" fill="currentColor"></circle>
+                    </svg>
+                </button>
                 <button 
                     class="tiptap-menu-button ${this._isCommandActive('orderedList') ? 'is-active' : ''} ${this._isInList ? 'show' : ''}" 
                     data-command="orderedList" 
                     data-show-on-list 
-                    title="Ordered List">1.</button>
+                    title="Ordered List">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="10" y1="6" x2="21" y2="6"></line>
+                        <line x1="10" y1="12" x2="21" y2="12"></line>
+                        <line x1="10" y1="18" x2="21" y2="18"></line>
+                        <text x="4" y="7" font-size="6" fill="currentColor" stroke="none" font-weight="bold">1</text>
+                        <text x="4" y="13" font-size="6" fill="currentColor" stroke="none" font-weight="bold">2</text>
+                        <text x="4" y="19" font-size="6" fill="currentColor" stroke="none" font-weight="bold">3</text>
+                    </svg>
+                </button>
             </div>
         `;
     }
@@ -191,6 +250,7 @@ export class BubbleMenu extends LitElement {
     private _updateButtonStates(): void {
         if (!this.editor) return;
         this._isInList = this.editor.isActive('bulletList') || this.editor.isActive('orderedList');
+        this._isInHeading = this.editor.isActive('heading');
     }
 
     private _handleClick(e: Event): void {
@@ -231,6 +291,7 @@ export class BubbleMenu extends LitElement {
         }
         
         this._updateButtonStates();
+        this.requestUpdate();
     }
 }
 

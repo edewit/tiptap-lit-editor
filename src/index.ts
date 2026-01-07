@@ -4,7 +4,7 @@
  */
 
 // Main editor component
-export { BaseEditor } from './base-editor.js';
+export { BaseEditor } from './editor.js';
 
 // Editor context for custom integrations
 export { editorContext, type EditorContextValue } from './editor-context.js';

@@ -8,6 +8,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { consume } from '@lit/context';
 import type { Editor } from '@tiptap/core';
 import { editorContext, type EditorContextValue } from '../editor-context.js';
+import './heading-dropdown.js';
 
 @customElement('tiptap-floating-menu')
 export class FloatingMenu extends LitElement {
@@ -91,19 +92,46 @@ export class FloatingMenu extends LitElement {
     override render() {
         return html`
             <div class="tiptap-menu">
-                <button class="tiptap-menu-button" data-command="heading" data-level="1" title="Heading 1">H1</button>
-                <button class="tiptap-menu-button" data-command="heading" data-level="2" title="Heading 2">H2</button>
-                <button class="tiptap-menu-button" data-command="heading" data-level="3" title="Heading 3">H3</button>
-                <button class="tiptap-menu-button" data-command="heading" data-level="4" title="Heading 4">H4</button>
-                <button class="tiptap-menu-button" data-command="heading" data-level="5" title="Heading 5">H5</button>
-                <button class="tiptap-menu-button" data-command="heading" data-level="6" title="Heading 6">H6</button>
+                <tiptap-heading-dropdown 
+                    mode="insert" 
+                    .insertPos="${this.pos}"
+                    @heading-inserted="${this._onContentInserted}"
+                    @paragraph-inserted="${this._onContentInserted}"
+                ></tiptap-heading-dropdown>
                 <div class="tiptap-menu-separator"></div>
-                <button class="tiptap-menu-button" data-command="bulletList" title="Bullet List">• List</button>
-                <button class="tiptap-menu-button" data-command="orderedList" title="Ordered List">1. List</button>
+                <button class="tiptap-menu-button" data-command="bulletList" title="Bullet List">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <circle cx="4" cy="6" r="1" fill="currentColor"></circle>
+                        <circle cx="4" cy="12" r="1" fill="currentColor"></circle>
+                        <circle cx="4" cy="18" r="1" fill="currentColor"></circle>
+                    </svg>
+                </button>
+                <button class="tiptap-menu-button" data-command="orderedList" title="Ordered List">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="10" y1="6" x2="21" y2="6"></line>
+                        <line x1="10" y1="12" x2="21" y2="12"></line>
+                        <line x1="10" y1="18" x2="21" y2="18"></line>
+                        <text x="4" y="7" font-size="6" fill="currentColor" stroke="none" font-weight="bold">1</text>
+                        <text x="4" y="13" font-size="6" fill="currentColor" stroke="none" font-weight="bold">2</text>
+                        <text x="4" y="19" font-size="6" fill="currentColor" stroke="none" font-weight="bold">3</text>
+                    </svg>
+                </button>
                 <div class="tiptap-menu-separator"></div>
-                <button class="tiptap-menu-button" data-command="codeBlock" title="Code Block">Code</button>
+                <button class="tiptap-menu-button" data-command="codeBlock" title="Code Block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </button>
             </div>
         `;
+    }
+
+    private _onContentInserted(): void {
+        this.hide();
     }
 
     /**
@@ -161,8 +189,6 @@ export class FloatingMenu extends LitElement {
         if (!button || !this.editor) return;
 
         const command = button.dataset.command;
-        const level = button.dataset.level;
-
         const pos = this.pos;
         if (pos === null) return;
 
@@ -202,15 +228,6 @@ export class FloatingMenu extends LitElement {
                 .insertContentAt(pos, {
                     type: 'codeBlock',
                     content: []
-                })
-                .setTextSelection(pos + 1)
-                .run();
-        } else if (command === 'heading' && level) {
-            this.editor.chain()
-                .focus()
-                .insertContentAt(pos, { 
-                    type: command, 
-                    attrs: { level: parseInt(level) } 
                 })
                 .setTextSelection(pos + 1)
                 .run();

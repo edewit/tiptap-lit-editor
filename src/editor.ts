@@ -238,16 +238,7 @@ export class BaseEditor extends LitElement {
         if (bubbleMenuContainer) {
             extensions.push(BubbleMenuExtension.configure({
                 element: bubbleMenuContainer,
-                shouldShow: ({ view, state }) => {
-                    if (view.dragging) {
-                        return false;
-                    }
-                    const { selection } = state;
-                    if (selection.empty || selection.from === selection.to) {
-                        return false;
-                    }
-                    return true;
-                },
+                shouldShow: ({ state: { selection } }) => !selection.empty,
             }));
         }
 
@@ -305,11 +296,12 @@ export class BaseEditor extends LitElement {
     override render() {
         return html`
             <div class="editor-wrapper">
-                <tiptap-gutter-menu id="gutter-menu">
-                    <tiptap-floating-menu></tiptap-floating-menu>
-                </tiptap-gutter-menu>
-                <tiptap-bubble-menu></tiptap-bubble-menu>
-                <div class="tiptap-editor"></div>
+                <div class="tiptap-editor">
+                    <tiptap-gutter-menu id="gutter-menu" style="visibility: hidden;">
+                        <tiptap-floating-menu></tiptap-floating-menu>
+                    </tiptap-gutter-menu>
+                    <tiptap-bubble-menu style="visibility: hidden;"></tiptap-bubble-menu>
+                </div>
             </div>
         `;
     }
