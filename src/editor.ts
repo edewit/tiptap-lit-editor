@@ -31,8 +31,8 @@ interface MarkdownEditor extends Editor {
     getMarkdown(): string;
 }
 
-@customElement('base-editor')
-export class BaseEditor extends LitElement {
+@customElement('tiptap-editor')
+export class TipTapEditor extends LitElement {
     @provide({ context: editorContext })
     @state()
     private _editorContext: EditorContextValue = { editor: null, editorElement: null };
@@ -165,7 +165,8 @@ export class BaseEditor extends LitElement {
             if (currentContent !== this.content) {
                 this._isInitializing = true;
                 this._editor.commands.setContent(this.content, { 
-                    emitUpdate: false
+                    emitUpdate: false,
+                    contentType: this.markdown ? 'markdown' : 'html'
                 });
                 this._editedContent = this.content;
                 requestAnimationFrame(() => {
@@ -246,6 +247,7 @@ export class BaseEditor extends LitElement {
             element: editorElement,
             extensions: extensions,
             content: this.content || '',
+            contentType: this.markdown ? 'markdown' : 'html',
             editable: this.editable,
             onUpdate: ({ editor }) => {
                 if (this.markdown) {
@@ -283,6 +285,7 @@ export class BaseEditor extends LitElement {
             },
         });
 
+        this._editor.commands.setTextSelection(this._editor.state.doc.content.size);
         // Update the context with the editor instance
         this._editorContext = { editor: this._editor, editorElement: this._editorElement };
 
@@ -324,7 +327,8 @@ export class BaseEditor extends LitElement {
     setContent(content: string): void {
         if (this._editor && !this._editor.isDestroyed) {
             this._editor.commands.setContent(content, {
-                emitUpdate: false
+                emitUpdate: false,
+                contentType: this.markdown ? 'markdown' : 'html'
             });
         }
         this._editedContent = content;
@@ -350,6 +354,6 @@ export class BaseEditor extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'base-editor': BaseEditor;
+        'tiptap-editor': TipTapEditor;
     }
 }

@@ -11,9 +11,9 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./base-editor": {
-      "types": "./dist/base-editor.d.ts",
-      "default": "./dist/base-editor.js"
+    "./tiptap-editor": {
+      "types": "./dist/tiptap-editor.d.ts",
+      "default": "./dist/tiptap-editor.js"
     },
     "./components/*": {
       "types": "./dist/components/*.d.ts",

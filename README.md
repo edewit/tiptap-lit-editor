@@ -31,21 +31,21 @@ Then open http://localhost:5173 in your browser. The demo showcases:
 
 ## Usage
 
-### Basic Usage with BaseEditor
+### Basic Usage with TipTapEditor
 
 ```javascript
-import { BaseEditor } from 'tiptap-lit-editor';
+import { TipTapEditor } from 'tiptap-lit-editor';
 
-// The BaseEditor component provides a complete editing experience
+// The TipTapEditor component provides a complete editing experience
 // with gutter menu, floating menu, and bubble menu built-in
 ```
 
 ```html
-<base-editor
+<tiptap-editor
   .content="${myContent}"
   .markdown="${true}"
   @content-changed="${handleContentChange}">
-</base-editor>
+</tiptap-editor>
 ```
 
 ### Using Individual Components
@@ -85,7 +85,7 @@ import {
 
 ## Components
 
-### `<base-editor>`
+### `<tiptap-editor>`
 
 The main editor component with all menus integrated.
 

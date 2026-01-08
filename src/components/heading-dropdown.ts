@@ -10,6 +10,7 @@ import type { Editor } from '@tiptap/core';
 import { editorContext, type EditorContextValue } from '../editor-context.js';
 
 export type HeadingDropdownMode = 'insert' | 'toggle';
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 @customElement('tiptap-heading-dropdown')
 export class HeadingDropdown extends LitElement {
@@ -169,7 +170,7 @@ export class HeadingDropdown extends LitElement {
         this.open = !this.open;
     }
 
-    private _selectHeading(level: number): void {
+    private _selectHeading(level: HeadingLevel): void {
         if (!this.editor) return;
         
         if (this.mode === 'insert' && this.insertPos !== null) {
@@ -245,7 +246,7 @@ export class HeadingDropdown extends LitElement {
                     Paragraph
                 </button>
                 <div class="dropdown-separator"></div>
-                ${[1, 2, 3, 4, 5, 6].map(level => html`
+                ${([1, 2, 3, 4, 5, 6] as HeadingLevel[]).map((level) => html`
                     <button 
                         class="dropdown-item ${currentLevel === level ? 'is-active' : ''}"
                         data-level="${level}"

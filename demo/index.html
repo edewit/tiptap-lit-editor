@@ -127,7 +127,7 @@
             min-height: 400px;
         }
 
-        base-editor {
+        tiptap-editor {
             height: 400px;
         }
 
@@ -195,7 +195,7 @@
         </div>
 
         <div class="editor-wrapper">
-            <base-editor id="editor" markdown></base-editor>
+            <tiptap-editor id="editor" markdown></tiptap-editor>
         </div>
 
         <div class="output-section">
@@ -210,7 +210,7 @@
     </div>
 
     <script type="module">
-        import { BaseEditor } from '../src/index.ts';
+        import { TipTapEditor } from '../src/index.ts';
 
         const editor = document.getElementById('editor');
         const output = document.getElementById('output');
