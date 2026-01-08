@@ -7,15 +7,19 @@ A TipTap-based rich text editor built with Lit components, featuring:
 - **Bubble Menu** - Text formatting menu (bold, italic, links, images)
 - **Prompt Dialog** - Reusable dialog for URL inputs
 
+## Demo
+
+🚀 **[Live Demo](https://edewit.github.io/tiptap-lit-editor/)**
+
 ## Installation
 
 ```bash
 npm install tiptap-lit-editor
 ```
 
-## Demo
+## Local Development
 
-Run the demo locally to try out the editor:
+Run the demo locally:
 
 ```bash
 npm install
