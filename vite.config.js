@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  root: 'demo',
   base: '/tiptap-lit-editor/',
   build: {
-    outDir: 'dist-demo',
+    outDir: '../demo/dist-demo',
+    emptyOutDir: true,
   },
 });
