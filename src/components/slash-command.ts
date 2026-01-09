@@ -22,7 +22,7 @@ interface SuggestionProps<T> {
     query: string;
     items: T[];
     command: (item: T) => void;
-    clientRect: (() => DOMRect | null) | null;
+    clientRect?: (() => DOMRect | null) | null;
 }
 
 interface SuggestionOptions<T> {
@@ -156,7 +156,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                     let component: SlashMenu | null = null;
                     let popup: HTMLDivElement | null = null;
 
-                    const updatePosition = (clientRect: (() => DOMRect | null) | null): void => {
+                    const updatePosition = (clientRect: (() => DOMRect | null) | null | undefined): void => {
                         if (popup && clientRect) {
                             const rect = clientRect();
                             if (rect) {

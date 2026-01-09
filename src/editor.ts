@@ -18,6 +18,7 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import { common, createLowlight } from "lowlight";
 
 import { editorContext, type EditorContextValue } from "./editor-context";
@@ -161,6 +162,14 @@ export class TipTapEditor extends LitElement {
         border-radius: var(--lumo-border-radius-m);
         outline: 5.5px solid var(--lumo-primary-color-10pct);
       }
+      .tiptap p.is-empty::before {
+        content: attr(data-placeholder);
+        font-style: italic;
+        color: var(--lumo-contrast-60pct, #666);
+        pointer-events: none;
+        height: 0;
+        float: left;
+      }
     `,
   ];
 
@@ -262,6 +271,9 @@ export class TipTapEditor extends LitElement {
       DragHandle.configure({
         render: () =>
           this.shadowRoot?.getElementById("gutter-menu") as HTMLElement,
+      }),
+      Placeholder.configure({
+        placeholder: "Type '/' for commands…",
       }),
       SlashCommand,
       ...this.extensions,
