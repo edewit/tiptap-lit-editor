@@ -69,8 +69,9 @@
     "@tiptap/extension-table-row": "^3.12.1",
     "@tiptap/markdown": "^3.13.0",
     "@tiptap/starter-kit": "^3.12.1",
-    "lowlight": "^3.3.0",
-    "highlight.js": "^11.9.0"
+    "@tiptap/suggestion": "^3.12.1",
+    "highlight.js": "^11.9.0",
+    "lowlight": "^3.3.0"
   },
   "peerDependencies": {
     "@vaadin/button": "^24.0.0",
