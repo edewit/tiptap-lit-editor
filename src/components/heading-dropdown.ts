@@ -37,25 +37,25 @@ export class HeadingDropdown extends LitElement {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: var(--lumo-space-xs);
-            padding: var(--lumo-space-xs) var(--lumo-space-s);
+            gap: var(--tiptap-space-xs, 4px);
+            padding: var(--tiptap-space-xs, 4px) var(--tiptap-space-s, 8px);
             border: none;
             background: transparent;
-            color: var(--lumo-body-text-color);
+            color: var(--tiptap-text-color, #1a1a1a);
             cursor: pointer;
-            border-radius: var(--lumo-border-radius-s);
-            font-size: var(--lumo-font-size-s);
+            border-radius: var(--tiptap-border-radius-s, 4px);
+            font-size: var(--tiptap-font-size-s, 14px);
             min-width: 80px;
             height: 32px;
         }
         
         .dropdown-trigger:hover {
-            background: var(--lumo-contrast-10pct);
+            background: var(--tiptap-hover-color, rgba(0, 0, 0, 0.05));
         }
         
         .dropdown-trigger.is-active {
-            background: var(--lumo-primary-color-10pct);
-            color: var(--lumo-primary-color);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
+            color: var(--tiptap-primary-color, #1976d2);
         }
         
         .dropdown-arrow {
@@ -76,10 +76,10 @@ export class HeadingDropdown extends LitElement {
             display: none;
             flex-direction: column;
             min-width: 120px;
-            background: var(--lumo-base-color);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-m);
-            padding: var(--lumo-space-xs);
+            background: var(--tiptap-surface-color, #fff);
+            border: 1px solid var(--tiptap-border-color, #e0e0e0);
+            border-radius: var(--tiptap-border-radius-m, 8px);
+            padding: var(--tiptap-space-xs, 4px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             margin-top: 4px;
         }
@@ -91,24 +91,24 @@ export class HeadingDropdown extends LitElement {
         .dropdown-item {
             display: flex;
             align-items: center;
-            padding: var(--lumo-space-xs) var(--lumo-space-s);
+            padding: var(--tiptap-space-xs, 4px) var(--tiptap-space-s, 8px);
             border: none;
             background: transparent;
-            color: var(--lumo-body-text-color);
+            color: var(--tiptap-text-color, #1a1a1a);
             cursor: pointer;
-            border-radius: var(--lumo-border-radius-s);
-            font-size: var(--lumo-font-size-s);
+            border-radius: var(--tiptap-border-radius-s, 4px);
+            font-size: var(--tiptap-font-size-s, 14px);
             text-align: left;
             white-space: nowrap;
         }
         
         .dropdown-item:hover {
-            background: var(--lumo-contrast-10pct);
+            background: var(--tiptap-hover-color, rgba(0, 0, 0, 0.05));
         }
         
         .dropdown-item.is-active {
-            background: var(--lumo-primary-color-10pct);
-            color: var(--lumo-primary-color);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
+            color: var(--tiptap-primary-color, #1976d2);
         }
         
         .dropdown-item[data-level="1"] { font-size: 1.4em; font-weight: bold; }
@@ -120,8 +120,8 @@ export class HeadingDropdown extends LitElement {
         
         .dropdown-separator {
             height: 1px;
-            background: var(--lumo-contrast-20pct);
-            margin: var(--lumo-space-xs) 0;
+            background: var(--tiptap-border-color, #e0e0e0);
+            margin: var(--tiptap-space-xs, 4px) 0;
         }
     `;
 
@@ -265,4 +265,3 @@ declare global {
         'tiptap-heading-dropdown': HeadingDropdown;
     }
 }
-

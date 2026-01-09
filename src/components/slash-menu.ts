@@ -24,35 +24,35 @@ export class SlashMenu extends LitElement {
             display: block;
         }
         .slash-menu {
-            background: var(--lumo-base-color);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-m);
+            background: var(--tiptap-surface-color, #fff);
+            border: 1px solid var(--tiptap-border-color, #e0e0e0);
+            border-radius: var(--tiptap-border-radius-m, 8px);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             min-width: 200px;
             max-height: 300px;
             overflow-y: auto;
-            padding: var(--lumo-space-xs) 0;
+            padding: var(--tiptap-space-xs, 4px) 0;
         }
         .slash-menu-label {
-            font-size: var(--lumo-font-size-xxs);
-            padding: var(--lumo-space-s) var(--lumo-space-s) var(--lumo-space-xs);
+            font-size: var(--tiptap-font-size-xxs, 11px);
+            padding: var(--tiptap-space-s, 8px) var(--tiptap-space-s, 8px) var(--tiptap-space-xs, 4px);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .slash-menu-item {
             display: flex;
             align-items: center;
-            gap: var(--lumo-space-s);
-            padding: var(--lumo-space-xs) var(--lumo-space-s);
+            gap: var(--tiptap-space-s, 8px);
+            padding: var(--tiptap-space-xs, 4px) var(--tiptap-space-s, 8px);
             cursor: pointer;
             transition: background-color 0.1s ease;
         }
         .slash-menu-item:hover,
         .slash-menu-item.is-selected {
-            background: var(--lumo-primary-color-10pct);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
         }
         .slash-menu-item.is-selected {
-            background: var(--lumo-primary-color-10pct);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
         }
         .slash-menu-item-icon {
             display: flex;
@@ -60,17 +60,17 @@ export class SlashMenu extends LitElement {
             justify-content: center;
             width: 24px;
             height: 24px;
-            font-size: var(--lumo-font-size-s);
+            font-size: var(--tiptap-font-size-s, 14px);
             font-weight: 600;
         }
         .slash-menu-item-label {
-            font-size: var(--lumo-font-size-s);
-            color: var(--lumo-body-text-color);
+            font-size: var(--tiptap-font-size-s, 14px);
+            color: var(--tiptap-text-color, #1a1a1a);
         }
         .slash-menu-empty {
-            padding: var(--lumo-space-m);
+            padding: var(--tiptap-space-m, 16px);
             text-align: center;
-            font-size: var(--lumo-font-size-s);
+            font-size: var(--tiptap-font-size-s, 14px);
         }
     `;
 

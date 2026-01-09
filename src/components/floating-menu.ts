@@ -35,11 +35,11 @@ export class FloatingMenu extends LitElement {
         }
         .tiptap-menu {
             display: flex;
-            gap: var(--lumo-space-xs);
-            background: var(--lumo-base-color);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-m);
-            padding: var(--lumo-space-xs);
+            gap: var(--tiptap-space-xs, 4px);
+            background: var(--tiptap-surface-color, #fff);
+            border: 1px solid var(--tiptap-border-color, #e0e0e0);
+            border-radius: var(--tiptap-border-radius-m, 8px);
+            padding: var(--tiptap-space-xs, 4px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             margin: 0;
         }
@@ -47,22 +47,22 @@ export class FloatingMenu extends LitElement {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--lumo-space-xs) var(--lumo-space-s);
+            padding: var(--tiptap-space-xs, 4px) var(--tiptap-space-s, 8px);
             border: none;
             background: transparent;
-            color: var(--lumo-body-text-color);
+            color: var(--tiptap-text-color, #1a1a1a);
             cursor: pointer;
-            border-radius: var(--lumo-border-radius-s);
-            font-size: var(--lumo-font-size-s);
+            border-radius: var(--tiptap-border-radius-s, 4px);
+            font-size: var(--tiptap-font-size-s, 14px);
             min-width: 32px;
             height: 32px;
         }
         .tiptap-menu-button:hover {
-            background: var(--lumo-contrast-10pct);
+            background: var(--tiptap-hover-color, rgba(0, 0, 0, 0.05));
         }
         .tiptap-menu-button.is-active {
-            background: var(--lumo-primary-color-10pct);
-            color: var(--lumo-primary-color);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
+            color: var(--tiptap-primary-color, #1976d2);
         }
         .tiptap-menu-button:disabled {
             opacity: 0.5;
@@ -70,8 +70,8 @@ export class FloatingMenu extends LitElement {
         }
         .tiptap-menu-separator {
             width: 1px;
-            background: var(--lumo-contrast-20pct);
-            margin: var(--lumo-space-xs) 0;
+            background: var(--tiptap-border-color, #e0e0e0);
+            margin: var(--tiptap-space-xs, 4px) 0;
         }
     `;
 

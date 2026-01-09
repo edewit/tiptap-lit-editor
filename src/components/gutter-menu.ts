@@ -28,26 +28,26 @@ export class GutterMenu extends LitElement {
             width: 24px;
             height: 24px;
             padding: 0;
-            border: 1px solid var(--lumo-contrast-20pct);
-            background: var(--lumo-base-color);
-            color: var(--lumo-body-text-color);
+            border: 1px solid var(--tiptap-border-color, #e0e0e0);
+            background: var(--tiptap-surface-color, #fff);
+            color: var(--tiptap-text-color, #1a1a1a);
             cursor: pointer;
-            border-radius: var(--lumo-border-radius-s);
-            font-size: var(--lumo-font-size-s);
+            border-radius: var(--tiptap-border-radius-s, 4px);
+            font-size: var(--tiptap-font-size-s, 14px);
             font-weight: 600;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         .gutter-menu-button:hover {
-            background: var(--lumo-primary-color-10pct);
-            border-color: var(--lumo-primary-color);
-            color: var(--lumo-primary-color);
+            background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
+            border-color: var(--tiptap-primary-color, #1976d2);
+            color: var(--tiptap-primary-color, #1976d2);
         }
         .gutter-add-button {
-            font-size: var(--lumo-font-size-l);
+            font-size: var(--tiptap-font-size-l, 18px);
             line-height: 1;
         }
         .gutter-drag-button {
-            font-size: var(--lumo-font-size-xs);
+            font-size: var(--tiptap-font-size-xs, 12px);
             line-height: 1.2;
             cursor: grab;
         }
@@ -98,4 +98,3 @@ declare global {
         'tiptap-gutter-menu': GutterMenu;
     }
 }
-

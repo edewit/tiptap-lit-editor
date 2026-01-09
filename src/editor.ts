@@ -82,9 +82,9 @@ export class TipTapEditor extends LitElement {
       }
       .tiptap-editor:focus {
         outline: none;
-        border-color: var(--lumo-primary-color, #1976d2);
+        border-color: var(--tiptap-primary-color, #1976d2);
         box-shadow: 0 0 0 2px
-          var(--lumo-primary-color-10pct, rgba(25, 118, 210, 0.1));
+          var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
       }
       .tiptap-editor:disabled {
         opacity: 0.6;
@@ -96,43 +96,43 @@ export class TipTapEditor extends LitElement {
       .tiptap-editor blockquote {
         margin: 1em 0;
         padding-left: 1em;
-        border-left: 2px solid var(--lumo-contrast-20pct, #ccc);
+        border-left: 2px solid var(--tiptap-border-color, #e0e0e0);
       }
       .tiptap-editor table {
         border-collapse: collapse;
         margin: 1em 0;
         width: 100%;
-        border: 1px solid var(--lumo-contrast-20pct, #ccc);
-        border-radius: var(--lumo-border-radius-m, 0.5rem);
+        border: 1px solid var(--tiptap-border-color, #e0e0e0);
+        border-radius: var(--tiptap-border-radius-m, 8px);
         overflow: hidden;
       }
       .tiptap-editor table td,
       .tiptap-editor table th {
-        border: 1px solid var(--lumo-contrast-20pct, #ccc);
-        padding: var(--lumo-space-xs, 0.25rem) var(--lumo-space-s, 0.5rem);
+        border: 1px solid var(--tiptap-border-color, #e0e0e0);
+        padding: var(--tiptap-space-xs, 4px) var(--tiptap-space-s, 8px);
         text-align: left;
       }
       .tiptap-editor table th {
-        background: var(--lumo-contrast-10pct, #eee);
+        background: var(--tiptap-hover-color, rgba(0, 0, 0, 0.05));
         font-weight: 600;
       }
       .tiptap-editor table tr:nth-child(even) {
-        background: var(--lumo-contrast-5pct, #f5f5f5);
+        background: var(--tiptap-surface-color-alt, #fafafa);
       }
       .tiptap-editor p.is-editor-empty:first-child::before {
         content: attr(data-placeholder);
         float: left;
-        color: var(--lumo-contrast-60pct, #666);
+        color: var(--tiptap-text-color-secondary, #666);
         pointer-events: none;
         height: 0;
       }
       .tiptap > pre {
-        border: 1px solid var(--lumo-contrast-20pct, #ccc);
-        border-radius: var(--lumo-border-radius-m, 0.5rem);
+        border: 1px solid var(--tiptap-border-color, #e0e0e0);
+        border-radius: var(--tiptap-border-radius-m, 8px);
         padding: 1em;
         margin: 1em 0;
         overflow-x: auto;
-        font-family: var(--lumo-font-family-monospace, monospace);
+        font-family: var(--tiptap-font-family-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace);
         font-size: 0.9em;
         line-height: 1.5;
       }
@@ -149,8 +149,8 @@ export class TipTapEditor extends LitElement {
         padding: 0;
       }
       .tiptap-editor a {
-        color: var(--lumo-primary-text-color);
-        text-decoration-color: var(--lumo-primary-color-50pct);
+        color: var(--tiptap-primary-color, #1976d2);
+        text-decoration-color: var(--tiptap-primary-color-50, rgba(25, 118, 210, 0.5));
         text-underline-offset: 2px;
         transition: color 0.15s ease, text-decoration-color 0.15s ease;
       }
@@ -158,14 +158,14 @@ export class TipTapEditor extends LitElement {
         content: attr(data-decoration-content);
       }
       .tiptap-editor span.suggestion {
-        background: var(--lumo-primary-color-10pct);
-        border-radius: var(--lumo-border-radius-m);
-        outline: 5.5px solid var(--lumo-primary-color-10pct);
+        background: var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
+        border-radius: var(--tiptap-border-radius-m, 8px);
+        outline: 5.5px solid var(--tiptap-primary-color-light, rgba(25, 118, 210, 0.1));
       }
       .tiptap p.is-empty::before {
         content: attr(data-placeholder);
         font-style: italic;
-        color: var(--lumo-contrast-60pct, #666);
+        color: var(--tiptap-text-color-secondary, #666);
         pointer-events: none;
         height: 0;
         float: left;
