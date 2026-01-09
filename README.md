@@ -5,6 +5,7 @@ A TipTap-based rich text editor built with Lit components, featuring:
 - **Gutter Menu** - Appears on hover with drag handle and add block button
 - **Floating Menu** - Block insertion menu (headings, lists, code blocks)
 - **Bubble Menu** - Text formatting menu (bold, italic, links, images)
+- **Slash Command** - Type "/" at line start to insert blocks with typeahead
 - **Prompt Dialog** - Reusable dialog for URL inputs
 
 ## Demo
@@ -30,6 +31,7 @@ Then open http://localhost:5173 in your browser. The demo showcases:
 - Markdown editing with live preview
 - Gutter menu for drag-and-drop and block insertion
 - Bubble menu for text formatting
+- Slash command for quickly inserting blocks
 - Syntax-highlighted code blocks
 - Tables and rich content
 
@@ -44,11 +46,31 @@ import { TipTapEditor } from 'tiptap-lit-editor';
 // with gutter menu, floating menu, and bubble menu built-in
 ```
 
+When you use lit you can use it like this:
+
 ```html
 <tiptap-editor
   .content="${myContent}"
   .markdown="${true}"
   @content-changed="${handleContentChange}">
+</tiptap-editor>
+```
+
+When using html or another framework, you can render same way as a textarea:
+
+```html
+<tiptap-editor>
+  <h1>Hello World</h1>
+  <p>This is <strong>bold</strong> text.</p>
+</tiptap-editor>
+```
+or with markdown:
+
+```html
+<tiptap-editor>
+# Hello world
+
+This is **bold** text.
 </tiptap-editor>
 ```
 

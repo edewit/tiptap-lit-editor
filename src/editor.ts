@@ -54,6 +54,14 @@ export class TipTapEditor extends LitElement {
   private _editorElement: HTMLElement | null = null;
   private _isInitializing = false;
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (!this.content && this.innerHTML.trim()) {
+      this.content = this.innerHTML;
+      this.innerHTML = '';
+    }
+  }
+
   static override styles = [
     hljsTheme,
     css`
