@@ -24,6 +24,7 @@ import { common, createLowlight } from "lowlight";
 import { editorContext, type EditorContextValue } from "./editor-context";
 import { hljsTheme } from "./hljs-theme";
 import "./components/bubble-menu";
+import "./components/table-bubble-menu";
 import "./components/floating-menu";
 import "./components/gutter-menu";
 import { SlashCommand } from "./components/slash-command";
@@ -273,7 +274,10 @@ export class TipTapEditor extends LitElement {
     const bubbleMenuContainer = this.shadowRoot?.querySelector(
       "tiptap-bubble-menu"
     ) as HTMLElement | null;
-    if (!bubbleMenuContainer) {
+    const tableBubbleMenuContainer = this.shadowRoot?.querySelector(
+      "tiptap-table-bubble-menu"
+    ) as HTMLElement | null;
+    if (!bubbleMenuContainer || !tableBubbleMenuContainer) {
       requestAnimationFrame(() => {
         this._tryInitializeEditor();
       });
@@ -325,7 +329,17 @@ export class TipTapEditor extends LitElement {
       extensions.push(
         BubbleMenuExtension.configure({
           element: bubbleMenuContainer,
-          shouldShow: ({ state: { selection } }) => !selection.empty,
+          shouldShow: ({ state: { selection }, editor }) => !selection.empty && !editor.isActive('table'),
+        })
+      );
+    }
+
+    // Add table bubble menu extension
+    if (tableBubbleMenuContainer) {
+      extensions.push(
+        BubbleMenuExtension.configure({
+          element: tableBubbleMenuContainer,
+          shouldShow: ({ editor }) => editor.isActive('table'),
         })
       );
     }
@@ -398,6 +412,7 @@ export class TipTapEditor extends LitElement {
             <tiptap-floating-menu></tiptap-floating-menu>
           </tiptap-gutter-menu>
           <tiptap-bubble-menu style="visibility: hidden;"></tiptap-bubble-menu>
+          <tiptap-table-bubble-menu style="visibility: hidden;"></tiptap-table-bubble-menu>
         </div>
       </div>
     `;

@@ -120,6 +120,15 @@ export class FloatingMenu extends LitElement {
                     </svg>
                 </button>
                 <div class="tiptap-menu-separator"></div>
+                <button class="tiptap-menu-button" data-command="table" title="Table">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="3" y1="15" x2="21" y2="15"></line>
+                        <line x1="12" y1="3" x2="12" y2="21"></line>
+                    </svg>
+                </button>
+                <div class="tiptap-menu-separator"></div>
                 <button class="tiptap-menu-button" data-command="codeBlock" title="Code Block">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="16 18 22 12 16 6"></polyline>
@@ -221,6 +230,11 @@ export class FloatingMenu extends LitElement {
                     }]
                 })
                 .setTextSelection(pos + 1)
+                .run();
+        } else if (command === 'table') {
+            this.editor.chain().focus()
+                .setTextSelection(pos + 1)
+                .insertTable()
                 .run();
         } else if (command === 'codeBlock') {
             this.editor.chain()

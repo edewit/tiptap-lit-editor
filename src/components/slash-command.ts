@@ -103,13 +103,13 @@ const BLOCK_TYPES: BlockTypeItem[] = [
             editor.chain().focus().deleteRange(range).toggleOrderedList().run();
         }
     },
-    // {
-    //   label: 'Table',
-    //   icon: '⩩',
-    //   command: ({ editor, range }) => {
-    //     editor.chain().focus().deleteRange(range).insertTable().run();
-    //   }
-    // },
+    {
+      label: 'Table',
+      icon: '⩩',
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).insertTable().run();
+      }
+    },
     {
         label: 'Code Block',
         icon: '</>',
