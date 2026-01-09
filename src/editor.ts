@@ -60,12 +60,14 @@ export class TipTapEditor extends LitElement {
       :host {
         display: block;
         height: 100%;
+        overflow: hidden;
       }
       .editor-wrapper {
         flex: 1;
         display: flex;
         flex-direction: column;
         min-height: 0;
+        height: 100%;
         overflow: hidden;
         position: relative;
       }
@@ -73,12 +75,43 @@ export class TipTapEditor extends LitElement {
         flex: 1;
         width: 100%;
         min-height: 0;
+        max-height: 100%;
         box-sizing: border-box;
         overflow-y: auto;
+        overflow-x: hidden;
         position: relative;
+        /* Firefox scrollbar */
+        scrollbar-width: auto;
+        scrollbar-color: var(--tiptap-border-color, #c0c0c0) var(--tiptap-surface-color-alt, #fafafa);
+      }
+      /* Ensure TipTap's content element doesn't create its own scrollbar */
+      .tiptap-editor > .tiptap {
+        overflow: visible;
+      }
+      /* WebKit scrollbar styling */
+      .tiptap-editor::-webkit-scrollbar {
+        width: 14px;
+        height: 14px;
+      }
+      .tiptap-editor::-webkit-scrollbar-track {
+        background: var(--tiptap-surface-color-alt, #fafafa);
+        border-left: 1px solid var(--tiptap-border-color, #e0e0e0);
+      }
+      .tiptap-editor::-webkit-scrollbar-thumb {
+        background: var(--tiptap-border-color, #c0c0c0);
+        border-radius: 7px;
+        border: 3px solid var(--tiptap-surface-color-alt, #fafafa);
+        min-height: 20px;
+      }
+      .tiptap-editor::-webkit-scrollbar-thumb:hover {
+        background: var(--tiptap-text-color-secondary, #999);
+      }
+      .tiptap-editor::-webkit-scrollbar-thumb:active {
+        background: var(--tiptap-text-color-secondary, #666);
       }
       .tiptap-editor .tiptap {
         padding-left: 50px;
+        box-sizing: border-box;
       }
       .tiptap-editor:focus {
         outline: none;
