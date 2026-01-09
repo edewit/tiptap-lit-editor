@@ -5,85 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TipTap Lit Editor Demo</title>
     <style>
-        :root {
-            /* Lumo-like CSS variables for the demo */
-            --lumo-space-xs: 0.25rem;
-            --lumo-space-s: 0.5rem;
-            --lumo-space-m: 1rem;
-            --lumo-space-l: 1.5rem;
-            --lumo-space-xl: 2rem;
-            --lumo-font-size-xs: 0.75rem;
-            --lumo-font-size-s: 0.875rem;
-            --lumo-font-size-m: 1rem;
-            --lumo-font-size-l: 1.125rem;
-            --lumo-font-size-xl: 1.5rem;
-            --lumo-border-radius-s: 0.25rem;
-            --lumo-border-radius-m: 0.5rem;
-            --lumo-base-color: #ffffff;
-            --lumo-body-text-color: #1a1a1a;
-            --lumo-contrast-5pct: rgba(0, 0, 0, 0.05);
-            --lumo-contrast-10pct: rgba(0, 0, 0, 0.1);
-            --lumo-contrast-20pct: rgba(0, 0, 0, 0.2);
-            --lumo-contrast-60pct: rgba(0, 0, 0, 0.6);
-            --lumo-primary-color: #1976d2;
-            --lumo-primary-color-10pct: rgba(25, 118, 210, 0.1);
-            --lumo-primary-color-50pct: rgba(25, 118, 210, 0.5);
-            --lumo-primary-contrast-color: #ffffff;
-            --lumo-shade-30pct: rgba(0, 0, 0, 0.3);
-            --lumo-font-family-monospace: 'Fira Code', 'Consolas', 'Monaco', monospace;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --lumo-base-color: #1e1e1e;
-                --lumo-body-text-color: #e0e0e0;
-                --lumo-contrast-5pct: rgba(255, 255, 255, 0.05);
-                --lumo-contrast-10pct: rgba(255, 255, 255, 0.1);
-                --lumo-contrast-20pct: rgba(255, 255, 255, 0.2);
-                --lumo-contrast-60pct: rgba(255, 255, 255, 0.6);
-                --lumo-shade-30pct: rgba(255, 255, 255, 0.3);
-            }
-        }
-
         * {
             box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 0;
-            background: var(--lumo-contrast-5pct);
-            color: var(--lumo-body-text-color);
+            padding: 2rem;
+            background: #f5f5f5;
             min-height: 100vh;
         }
 
         .demo-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: var(--lumo-space-xl);
         }
 
         .demo-header {
             text-align: center;
-            margin-bottom: var(--lumo-space-xl);
+            margin-bottom: 2rem;
         }
 
         .demo-header h1 {
-            margin: 0 0 var(--lumo-space-s) 0;
+            margin: 0 0 0.5rem;
             font-size: 2rem;
-            color: var(--lumo-primary-color);
+            color: #1976d2;
         }
 
         .demo-header p {
             margin: 0;
-            color: var(--lumo-contrast-60pct);
+            color: #666;
         }
 
         .demo-controls {
             display: flex;
-            gap: var(--lumo-space-m);
-            margin-bottom: var(--lumo-space-m);
+            gap: 1rem;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
             align-items: center;
         }
@@ -91,40 +49,38 @@
         .demo-controls label {
             display: flex;
             align-items: center;
-            gap: var(--lumo-space-xs);
+            gap: 0.5rem;
             cursor: pointer;
         }
 
         .demo-controls button {
-            padding: var(--lumo-space-xs) var(--lumo-space-m);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-s);
-            background: var(--lumo-base-color);
-            color: var(--lumo-body-text-color);
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
             cursor: pointer;
-            font-size: var(--lumo-font-size-s);
+            font-size: 0.875rem;
         }
 
         .demo-controls button:hover {
-            background: var(--lumo-contrast-10pct);
+            background: #f0f0f0;
         }
 
         .demo-controls button.primary {
-            background: var(--lumo-primary-color);
-            color: var(--lumo-primary-contrast-color);
-            border-color: var(--lumo-primary-color);
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
         }
 
         .demo-controls button.primary:hover {
-            opacity: 0.9;
+            background: #1565c0;
         }
 
         .editor-wrapper {
-            background: var(--lumo-base-color);
-            border-radius: var(--lumo-border-radius-m);
+            background: white;
+            border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            min-height: 400px;
         }
 
         tiptap-editor {
@@ -132,21 +88,20 @@
         }
 
         .output-section {
-            margin-top: var(--lumo-space-xl);
+            margin-top: 2rem;
         }
 
         .output-section h3 {
-            margin: 0 0 var(--lumo-space-s) 0;
-            font-size: var(--lumo-font-size-l);
+            margin: 0 0 0.5rem;
         }
 
         .output-content {
-            background: var(--lumo-base-color);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-m);
-            padding: var(--lumo-space-m);
-            font-family: var(--lumo-font-family-monospace);
-            font-size: var(--lumo-font-size-s);
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.875rem;
             white-space: pre-wrap;
             word-break: break-all;
             max-height: 300px;
@@ -155,24 +110,23 @@
 
         .tabs {
             display: flex;
-            gap: var(--lumo-space-xs);
-            margin-bottom: var(--lumo-space-s);
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
         .tabs button {
-            padding: var(--lumo-space-xs) var(--lumo-space-m);
-            border: 1px solid var(--lumo-contrast-20pct);
-            border-radius: var(--lumo-border-radius-s) var(--lumo-border-radius-s) 0 0;
-            background: var(--lumo-contrast-5pct);
-            color: var(--lumo-body-text-color);
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px 4px 0 0;
+            background: #f5f5f5;
             cursor: pointer;
-            font-size: var(--lumo-font-size-s);
+            font-size: 0.875rem;
             border-bottom: none;
         }
 
         .tabs button.active {
-            background: var(--lumo-base-color);
-            border-bottom: 1px solid var(--lumo-base-color);
+            background: white;
+            border-bottom: 1px solid white;
             margin-bottom: -1px;
         }
     </style>
