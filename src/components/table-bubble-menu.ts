@@ -11,15 +11,15 @@ import { editorContext, type EditorContextValue } from '../editor-context.js';
 
 @customElement('tiptap-table-bubble-menu')
 export class TableBubbleMenu extends LitElement {
-    @consume({ context: editorContext, subscribe: true })
-    @state()
-    private _editorContext?: EditorContextValue;
+  @consume({ context: editorContext, subscribe: true })
+  @state()
+  private _editorContext?: EditorContextValue;
 
-    private _updateFrame: number | null = null;
-    private _lastUpdateTime = 0;
-    private _updateThrottle = 50; // Update at most every 50ms
+  private _updateFrame: number | null = null;
+  private _lastUpdateTime = 0;
+  private _updateThrottle = 50; // Update at most every 50ms
 
-    static override styles = css`
+  static override styles = css`
         :host {
             display: block;
         }
@@ -65,70 +65,70 @@ export class TableBubbleMenu extends LitElement {
         }
     `;
 
-    get editor(): Editor | null {
-        return this._editorContext?.editor ?? null;
-    }
+  get editor(): Editor | null {
+    return this._editorContext?.editor ?? null;
+  }
 
-    get editorElement(): HTMLElement | null {
-        return this._editorContext?.editorElement ?? null;
-    }
+  get editorElement(): HTMLElement | null {
+    return this._editorContext?.editorElement ?? null;
+  }
 
-    override connectedCallback(): void {
-        super.connectedCallback();
-        this._setupEditorUpdates();
-    }
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this._setupEditorUpdates();
+  }
 
-    override disconnectedCallback(): void {
-        super.disconnectedCallback();
-        this._cleanupEditorUpdates();
-    }
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._cleanupEditorUpdates();
+  }
 
-    override firstUpdated(): void {
-        this.addEventListener('click', this._handleClick.bind(this));
-        this._setupEditorUpdates();
-    }
+  override firstUpdated(): void {
+    this.addEventListener('click', this._handleClick.bind(this));
+    this._setupEditorUpdates();
+  }
 
-    override updated(): void {
-        // Re-setup updates when context changes
-        if (this.editor) {
-            this._setupEditorUpdates();
+  override updated(): void {
+    // Re-setup updates when context changes
+    if (this.editor) {
+      this._setupEditorUpdates();
+    }
+  }
+
+  private _setupEditorUpdates(): void {
+    this._cleanupEditorUpdates();
+
+    if (!this.editor) return;
+
+    const updateLoop = (): void => {
+      if (this.editor && this.isConnected) {
+        const now = Date.now();
+        const isVisible = this.offsetParent !== null &&
+          this.style.display !== 'none' &&
+          window.getComputedStyle(this).display !== 'none';
+
+        if (isVisible && (now - this._lastUpdateTime) >= this._updateThrottle) {
+          this.requestUpdate();
+          this._lastUpdateTime = now;
         }
-    }
-
-    private _setupEditorUpdates(): void {
-        this._cleanupEditorUpdates();
-        
-        if (!this.editor) return;
-        
-        const updateLoop = (): void => {
-            if (this.editor && this.isConnected) {
-                const now = Date.now();
-                const isVisible = this.offsetParent !== null && 
-                                 this.style.display !== 'none' &&
-                                 window.getComputedStyle(this).display !== 'none';
-                
-                if (isVisible && (now - this._lastUpdateTime) >= this._updateThrottle) {
-                    this.requestUpdate();
-                    this._lastUpdateTime = now;
-                }
-                this._updateFrame = requestAnimationFrame(updateLoop);
-            } else {
-                this._cleanupEditorUpdates();
-            }
-        };
-        
         this._updateFrame = requestAnimationFrame(updateLoop);
-    }
+      } else {
+        this._cleanupEditorUpdates();
+      }
+    };
 
-    private _cleanupEditorUpdates(): void {
-        if (this._updateFrame) {
-            cancelAnimationFrame(this._updateFrame);
-            this._updateFrame = null;
-        }
-    }
+    this._updateFrame = requestAnimationFrame(updateLoop);
+  }
 
-    override render() {
-        return html`
+  private _cleanupEditorUpdates(): void {
+    if (this._updateFrame) {
+      cancelAnimationFrame(this._updateFrame);
+      this._updateFrame = null;
+    }
+  }
+
+  override render() {
+    return html`
             <div class="tiptap-menu">
                 <button 
                     class="tiptap-menu-button" 
@@ -217,83 +217,53 @@ export class TableBubbleMenu extends LitElement {
                         <rect x="3" y="3" width="18" height="6" rx="2" ry="2" fill="currentColor" opacity="0.2"></rect>
                     </svg>
                 </button>
-                <button 
-                    class="tiptap-menu-button" 
-                    data-command="mergeCells" 
-                    title="Merge Cells">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="12" y1="3" x2="12" y2="21"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <polyline points="8,10 12,12 8,14"></polyline>
-                        <polyline points="16,10 12,12 16,14"></polyline>
-                    </svg>
-                </button>
-                <button 
-                    class="tiptap-menu-button" 
-                    data-command="splitCell" 
-                    title="Split Cell">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="12" y1="3" x2="12" y2="21"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <polyline points="12,10 8,12 12,14"></polyline>
-                        <polyline points="12,10 16,12 12,14"></polyline>
-                    </svg>
-                </button>
             </div>
         `;
+  }
+
+  private _handleClick(e: Event): void {
+    const path = e.composedPath();
+    const button = path.find(el =>
+      el instanceof HTMLElement && el.classList?.contains('tiptap-menu-button')
+    ) as HTMLElement | undefined;
+
+    if (!button || !this.editor) return;
+
+    const command = button.dataset.command;
+
+    switch (command) {
+      case 'addColumnBefore':
+        this.editor.chain().focus().addColumnBefore().run();
+        break;
+      case 'addColumnAfter':
+        this.editor.chain().focus().addColumnAfter().run();
+        break;
+      case 'deleteColumn':
+        this.editor.chain().focus().deleteColumn().run();
+        break;
+      case 'addRowBefore':
+        this.editor.chain().focus().addRowBefore().run();
+        break;
+      case 'addRowAfter':
+        this.editor.chain().focus().addRowAfter().run();
+        break;
+      case 'deleteRow':
+        this.editor.chain().focus().deleteRow().run();
+        break;
+      case 'deleteTable':
+        this.editor.chain().focus().deleteTable().run();
+        break;
+      case 'toggleHeaderRow':
+        this.editor.chain().focus().toggleHeaderRow().run();
+        break;
     }
 
-    private _handleClick(e: Event): void {
-        const path = e.composedPath();
-        const button = path.find(el => 
-            el instanceof HTMLElement && el.classList?.contains('tiptap-menu-button')
-        ) as HTMLElement | undefined;
-        
-        if (!button || !this.editor) return;
-        
-        const command = button.dataset.command;
-        
-        switch (command) {
-            case 'addColumnBefore':
-                this.editor.chain().focus().addColumnBefore().run();
-                break;
-            case 'addColumnAfter':
-                this.editor.chain().focus().addColumnAfter().run();
-                break;
-            case 'deleteColumn':
-                this.editor.chain().focus().deleteColumn().run();
-                break;
-            case 'addRowBefore':
-                this.editor.chain().focus().addRowBefore().run();
-                break;
-            case 'addRowAfter':
-                this.editor.chain().focus().addRowAfter().run();
-                break;
-            case 'deleteRow':
-                this.editor.chain().focus().deleteRow().run();
-                break;
-            case 'deleteTable':
-                this.editor.chain().focus().deleteTable().run();
-                break;
-            case 'toggleHeaderRow':
-                this.editor.chain().focus().toggleHeaderRow().run();
-                break;
-            case 'mergeCells':
-                this.editor.chain().focus().mergeCells().run();
-                break;
-            case 'splitCell':
-                this.editor.chain().focus().splitCell().run();
-                break;
-        }
-        
-        this.requestUpdate();
-    }
+    this.requestUpdate();
+  }
 }
 
 declare global {
-    interface HTMLElementTagNameMap {
-        'tiptap-table-bubble-menu': TableBubbleMenu;
-    }
+  interface HTMLElementTagNameMap {
+    'tiptap-table-bubble-menu': TableBubbleMenu;
+  }
 }
