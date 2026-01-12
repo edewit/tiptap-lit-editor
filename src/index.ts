@@ -14,7 +14,7 @@ export { hljsTheme } from './hljs-theme.js';
 
 // Menu components
 export { BubbleMenu } from './components/bubble-menu.js';
-export { TableBubbleMenu } from './components/table-bubble-menu.js';
+export { TableControls } from './components/table-controls.js';
 export { FloatingMenu } from './components/floating-menu.js';
 export { GutterMenu } from './components/gutter-menu.js';
 
